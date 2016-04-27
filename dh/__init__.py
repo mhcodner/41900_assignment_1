@@ -91,14 +91,14 @@ def create_dh_key():
     # g = h^{(p-1)/q} mod p
     g = 2
     # Creates a Diffie-Hellman key
-    a = random.randint(0,2**8)
-    public = (g**a) % p
+    a = random.randint(0, 2 ** 8)
+    public = (g ** a) % p
     # Returns (public, private)
-    return (public,a)
+    return (public, a)
 
 def calculate_dh_secret(their_public, my_private):
     # Calculate the shared secret
-    shared_secret = their_public * my_private
+    shared_secret = (their_public ** my_private) % p
 
     # Hash the value so that:
     # (a) There's no bias in the bits of the output
