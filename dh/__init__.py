@@ -89,11 +89,12 @@ q = read_hex(raw_prime) # Big prime q
 def create_dh_key():
     h = random.randint(1, p - 1)
     # g = h^{(p-1)/q} mod p
-    g = (h ** ((p - 1)/q)) % p
+    g = 2
     # Creates a Diffie-Hellman key
+    a = random.randint(0,2**8)
+    public = (g**a) % p
     # Returns (public, private)
-    a = random.randint(0, int(2**8))
-    return (a, a)
+    return (public,a)
 
 def calculate_dh_secret(their_public, my_private):
     # Calculate the shared secret
