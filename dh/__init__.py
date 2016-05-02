@@ -56,11 +56,9 @@ p = read_hex(raw_prime) # Big prime p
 # Project TODO: write the appropriate code to perform DH key exchange
 
 def create_dh_key():
-    h = random.randint(1, p - 1)
-    # g = h^{(p-1)/q} mod p
     g = 2
     # Creates a Diffie-Hellman key
-    a = random.randint(0, 2 ** 8)
+    a = random.randint(0, 256)
     public = (g ** a) % p
     # Returns (public, private)
     return (public, a)
