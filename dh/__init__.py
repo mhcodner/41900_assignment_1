@@ -58,7 +58,7 @@ p = read_hex(raw_prime) # Big prime p
 def create_dh_key():
     g = 2
     # Creates a Diffie-Hellman key
-    a = random.randint(0, 256)
+    a = random.randint(0, pow(2, 256))
     public = pow(g, a, p)
     # Returns (public, private)
     return (public, a)
