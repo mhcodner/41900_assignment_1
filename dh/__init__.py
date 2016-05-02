@@ -50,7 +50,7 @@ B1D510BD 7EE74D73 FAF36BC3 1ECFA268 359046F4 EB879F92
 4009438B 481C6CD7 889A002E D5EE382B C9190DA6 FC026E47
 9558E447 5677E9AA 9E3050E2 765694DF C81F56E8 80B96E71
 60C980DD 98EDD3DF FFFFFFFF FFFFFFFF"""
-# Convert from the value supplied in the RFC to an integer. changes.
+# Convert from the value supplied in the RFC to an integer.
 p = read_hex(raw_prime) # Big prime p
 
 raw_prime = """FFFFFFFF FFFFFFFF C90FDAA2 2168C234 C4C6628B 80DC1CD1
@@ -84,10 +84,10 @@ def create_dh_key():
     g = 2
     # Creates a Diffie-Hellman key
     # calculation is on line 192 of RFC2631
-    a = random.randint(2, q - 2)
-    public = pow(g, a, p)
+    private = random.randint(2, q - 2)
+    public = pow(g, private, p)
     # Returns (public, private)
-    return (public, a)
+    return (public, private)
 
 def calculate_dh_secret(their_public, my_private):
     # Calculate the shared secret
