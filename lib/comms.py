@@ -29,9 +29,12 @@ class StealthConn(object):
             print("Shared hash: {}".format(shared_hash))
 
         # Default XOR algorithm can only take a key of length 32
+        # change this to a block cipher
+        # generate IV based on shared hash, reinitialise cipher each time send() is called
         self.cipher = XOR.new(shared_hash[:4])
 
     def send(self, data):
+        # send IV + encrypted message (encrypt the message + HMAC)
         if self.cipher:
             encrypted_data = self.cipher.encrypt(data)
             if self.verbose:
@@ -48,6 +51,8 @@ class StealthConn(object):
 
     def recv(self):
         # Decode the data's length from an unsigned two byte int ('H')
+        # use IV to reinitialise the cipher so that we can decrypt the message
+        # decrpyted message contains HMAC at the end
         pkt_len_packed = self.conn.recv(struct.calcsize('H'))
         unpacked_contents = struct.unpack('H', pkt_len_packed)
         pkt_len = unpacked_contents[0]
