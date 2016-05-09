@@ -84,7 +84,9 @@ def create_dh_key():
     g = 2
     # Creates a Diffie-Hellman key
     # calculation is on line 192 of RFC2631
-    private = random.randint(2, q - 2)
+    # lowerBound is a 160 bit prime number calculated using BigInteger.probablePrime(160, new Random()) in Java
+    lowerBound = 817680784199988396227528810784457674320784568771 
+    private = random.randint(lowerBound, q - 2)
     public = pow(g, private, p)
     # Returns (public, private)
     return (public, private)
