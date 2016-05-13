@@ -54,7 +54,7 @@ class StealthConn(object):
     def recv(self):
         # Decode the data's length from an unsigned two byte int ('H')
         # use IV to reinitialise the cipher so that we can decrypt the message
-        # decrpyted message contains HMAC at the end
+        # decrypted message contains HMAC at the end
         pkt_len_packed = self.conn.recv(struct.calcsize('H'))
         unpacked_contents = struct.unpack('H', pkt_len_packed)
         pkt_len = unpacked_contents[0]
