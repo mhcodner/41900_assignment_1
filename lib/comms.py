@@ -1,7 +1,7 @@
 import struct
 
 from Crypto.Cipher import AES
-from Crypto.Random import random
+from Crypto import Random
 
 from dh import create_dh_key, calculate_dh_secret
 
@@ -32,8 +32,8 @@ class StealthConn(object):
         # Default XOR algorithm can only take a key of length 32
         # change this to a block cipher
         # generate IV based on shared hash, reinitialise cipher each time send() is called
-        self.iv = Random.new().read(shared_hash)
-        self.cipher = AES.new(shared_hash, AES.MODE_CBC, self.iv)
+        self.iv = Random.new().read(AES.block_size)
+        self.cipher = AES.new(shared_hash[:32], AES.MODE_CBC, self.iv)
 
     def send(self, data):
         # send IV + encrypted message (encrypt the message + HMAC)
