@@ -5,6 +5,11 @@ from Crypto import Random
 
 from dh import create_dh_key, calculate_dh_secret
 
+BS = 16
+pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
+unpad = lambda s : s[:-ord(s[len(s)-1:])]
+shared_hash = ""
+
 class StealthConn(object):
     def __init__(self, conn, client=False, server=False, verbose=False):
         self.conn = conn
@@ -26,6 +31,7 @@ class StealthConn(object):
             # Receive their public key
             their_public_key = int(self.recv())
             # Obtain our shared secret
+            global shared_hash
             shared_hash = calculate_dh_secret(their_public_key, my_private_key)
             print("Shared hash: {}".format(shared_hash))
 
@@ -38,7 +44,10 @@ class StealthConn(object):
     def send(self, data):
         # send IV + encrypted message (encrypt the message + HMAC)
         if self.cipher:
-            encrypted_data = self.cipher.encrypt(data)
+            data = pad(str(data))
+            self.iv = Random.new().read(AES.block_size)
+            self.cipher = AES.new(shared_hash[:32], AES.MODE_CBC, self.iv)
+            encrypted_data = self.iv + self.cipher.encrypt(data)
             if self.verbose:
                 print("Original data: {}".format(data))
                 print("Encrypted data: {}".format(repr(encrypted_data)))
@@ -61,11 +70,14 @@ class StealthConn(object):
 
         encrypted_data = self.conn.recv(pkt_len)
         if self.cipher:
-            data = self.cipher.decrypt(encrypted_data)
-            if self.verbose:
-                print("Receiving packet of length {}".format(pkt_len))
-                print("Encrypted data: {}".format(repr(encrypted_data)))
-                print("Original data: {}".format(data))
+            iv = encrypted_data[:16]
+            self.cipher = AES.new(shared_hash[:32], AES.MODE_CBC, iv)
+            data = self.cipher.decrypt(encrypted_data[16:]).decode("utf-8")
+            data = unpad(data)
+
+            print("Receiving packet of length {}".format(pkt_len))
+            print("Encrypted data: {}".format(repr(encrypted_data)))
+            print("Original data: {}".format(data))
         else:
             data = encrypted_data
 
