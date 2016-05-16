@@ -2,3 +2,4 @@ __pycache__
 *.pyc
 valuables.txt
 .idea
+.DS_Store
