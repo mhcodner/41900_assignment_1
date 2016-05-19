@@ -2,6 +2,8 @@ import struct
 
 from Crypto.Cipher import AES
 from Crypto import Random
+from Crypto.Hash import HMAC
+from Crypto.Hash import SHA256
 
 from dh import create_dh_key, calculate_dh_secret
 
@@ -40,6 +42,8 @@ class StealthConn(object):
         # generate IV based on shared hash, reinitialise cipher each time send() is called
         self.iv = Random.new().read(AES.block_size)
         self.cipher = AES.new(shared_hash[:32], AES.MODE_CBC, self.iv)
+        # adding HMAC for each message using SHA256
+        hmac - HMAC.new(self.cipher, digestmod = SHA256)
 
     def send(self, data):
         # send IV + encrypted message (encrypt the message + HMAC)
