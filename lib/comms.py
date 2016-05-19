@@ -42,8 +42,6 @@ class StealthConn(object):
         # generate IV based on shared hash, reinitialise cipher each time send() is called
         self.iv = Random.new().read(AES.block_size)
         self.cipher = AES.new(shared_hash[:32], AES.MODE_CBC, self.iv)
-        # adding HMAC for each message using SHA256
-        hmac - HMAC.new(self.cipher, digestmod = SHA256)
 
     def send(self, data):
         # send IV + encrypted message (encrypt the message + HMAC)
@@ -52,6 +50,8 @@ class StealthConn(object):
             self.iv = Random.new().read(AES.block_size)
             self.cipher = AES.new(shared_hash[:32], AES.MODE_CBC, self.iv)
             encrypted_data = self.iv + self.cipher.encrypt(data)
+            hmac - HMAC.new(self.cipher,encrypted_data, digestmod = SHA256)
+
             if self.verbose:
                 print("Original data: {}".format(data))
                 print("Encrypted data: {}".format(repr(encrypted_data)))
