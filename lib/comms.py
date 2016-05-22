@@ -1,4 +1,4 @@
-import struct
+ import struct
 
 from Crypto.Cipher import AES
 from Crypto import Random
