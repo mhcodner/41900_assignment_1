@@ -99,11 +99,11 @@ class StealthConn(object):
         received_timestamp = str(data[:timestamp_format_len], 'ascii')
         data = data[timestamp_format_len:]
         
-        #get the HMAC, if we're using one
+        # get the HMAC, if we're using one
         if self.shared_hash != None:
             h = HMAC.new(self.shared_hash)
-            hmac = data[:h.digest_size * 2] #Get the HMAC part of the message
-            data = data[h.digest_size * 2:] # Get the data part of the message
+            hmac = data[:h.digest_size * 2] # Get the HMAC from the received data
+            data = data[h.digest_size * 2:] # Get the message from the received data
             h.update(data)
             if h.hexdigest() != str(hmac, 'ascii'): #HMAC is invalid, so raise an error
                 if self.verbose:
@@ -114,7 +114,7 @@ class StealthConn(object):
         elif self.verbose:
             print("Shared hash is None")
         
-        #we'll only accept messages that have timestamps after the one we last recieved
+        # we'll only accept messages that have timestamps after the one we last recieved
         msg_time = datetime.strptime(received_timestamp, timestamp_format);
         if self.verbose:
             print(msg_time)
