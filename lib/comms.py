@@ -51,15 +51,11 @@ class StealthConn(object):
             h = HMAC.new(self.shared_hash)
             h.update(data)
             data_HMACed = bytes(h.hexdigest() + data.decode("ascii"),"ascii")
-            # Use the following code if you want to test what happens when the HMAC is bad
-            # data_HMACed = h.hexdigest()[:-1] + "a"  + data.decode("ascii") # replace a random character in the digest
         else:
             data_HMACed = data
         
         # Get current time
         time_now = datetime.now()
-        # The following code can be used to test an invalid nonce
-        # time_now = self.nonce - datetime.timedelta(2,0) # Take away 2 days from the last recieved message
         timestr = datetime.strftime(time_now, timestamp_format) # format the timestamp
         data_HMACed = bytes(timestr, 'ascii') + data_HMACed # prepend the HMAC to the message
             
@@ -105,7 +101,7 @@ class StealthConn(object):
             hmac = data[:h.digest_size * 2] # Get the HMAC from the received data
             data = data[h.digest_size * 2:] # Get the message from the received data
             h.update(data)
-            if h.hexdigest() != str(hmac, 'ascii'): #HMAC is invalid, so raise an error
+            if h.hexdigest() != str(hmac, 'ascii'): # HMAC is invalid, so raise an error
                 if self.verbose:
                     print("Received HMAC:", str(hmac,'ascii'))
                     print("HMAC generated from digest:", h.hexdigest())
@@ -118,7 +114,7 @@ class StealthConn(object):
         msg_time = datetime.strptime(received_timestamp, timestamp_format);
         if self.verbose:
             print(msg_time)
-        if msg_time <= self.nonce: #If the timestamp is older, then raise an error
+        if msg_time <= self.nonce: # If the timestamp is older, then raise an error
             if self.verbose:
                 print("Invalid nonce")
                 print("Timestamp:", received_timestamp)
